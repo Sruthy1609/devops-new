@@ -1,0 +1,40 @@
+Docker
+
+Ports allowed - NFS , HTTP , Custom - 8080,SSH
+
+yum update -y
+yum install -y yum-utils
+yum install docker -y
+systemctl start docker
+systemctl enable docker	
+docker pull httpd
+docker pull ubuntu
+docker run -it --name web-app -p 8080:80 ubuntu:latest /bin/bash
+apt update
+apt list --upgradable
+apt install apache2 -y
+cd var/www/html
+echo "This is my web app" > index.html
+cd
+cd var/www/html
+ll
+service apache2 start
+
+
+Volume
+      apt update
+      apt list --upgradable
+      apt install apache2 -y
+      cd var/www/html
+      echo "This is my web app" > index.html
+      cd
+      cd var/www/html
+      ll
+      service apache2 start
+
+NGINX
+     docker pull nginx
+     docker pull memcached
+     docker image
+     docker images
+     docker run -it --name webapp -p 9090:80 nginx:latest /bin/bash
