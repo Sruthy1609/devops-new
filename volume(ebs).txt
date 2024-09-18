@@ -1,0 +1,36 @@
+Migrating volume from one region to another region.
+
+ 
+1. Create Instance
+2. Create Volume
+3. Action -> attach volume
+
+4. Goto Terminal
+lsblk
+mkdir /data
+formatting : mkfs.ext4 /dev/xvdc (disk name)
+mount /dev/xvdc /data (Temp mounting)
+blkid - copy uuid
+vim /etc/fstab (Perm mounting)
+uuid /data ext4 defaults 0 0
+reboot(for permanent)
+cd /data
+touch sruthy.txt{1..10}
+ll
+
+
+browser
+volume->action->create snapshot
+snapshot->copy snapshot->select dest(other region)
+
+go in other region
+snapshot->create volume->instance
+attach volume
+
+terminal
+lsblk
+mkdir /data
+mount /dev/xvdc /data
+cd /data
+touch sruthy.txt{1..10}
+ll
