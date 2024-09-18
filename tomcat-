@@ -1,0 +1,105 @@
+cd  data                   
+yum install git -y
+git init 
+cd 
+ssh-keygen
+cd .ssh/
+ls -la
+cat id_rsa.pub
+cd
+cd data
+vim index.html
+{ clone k liye 
+git clone  ssh paste 
+cd clone bali directory
+git branch
+ls -la
+git remote remove origin 
+git remote add origin 
+git push origin mnain }
+ 
+[ 
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:Chiragsinghal123/Testing.git
+git push -u origin main
+]
+ 
+ 
+userpassword permission:-
+useradd chirag
+passwd chirag
+type passwd 
+then cd 
+vim /etc/sudoers -- permission k liye 
+vim /etc/passwd --- 
+whereis useradd
+whereis passwd
+ 
+jankins:- 
+dnf install java-17-amazon-corretto -y
+java -version
+wget -O /etc/yum.repos.d/jenkins.repo \
+https://pkg.jenkins.io/redhat-stable/jenkins.repo
+rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+dnf install jenkins -y
+systemctl enable jenkins
+systemctl start Jenkins
+ 
+ 
+{http://your_amazon_linux_instance_ip:8080} iske dalne k bad 
+cat /var/lib/jenkins/secrets/initialAdminPassword
+ 
+ 
+tom cat -------------
+ 
+sudo su -
+cd /opt
+wget tomcat link 
+ls
+tar -xvzf cpy/paste
+ls
+mv link tomcat
+ls
+ 
+ 
+cd tomcat
+ls
+cd bin
+ls
+./startup.sh
+yum install java*
+./startup.sh
+cd ..
+vim second last link (changes liast line )
+vim first link (changes last line)
+cd bin 
+./shutdown.sh
+./startup.sh
+cd ..
+cd conf/
+ls
+vim tomcat-users.xml
+cd ..
+cd bin 
+./shutdwon.sh
+./startup.sh             {**/*.war}
+ 
+<role rolename="manager-gui"/>
+<role rolename="manager-script"/>
+<role rolename="manager-jmx"/>
+<role rolename="manager-status"/>   
+<user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status"/>
+<user username="deployer" password="deployer" roles="manager-script"/>
+<user username="tomcat" password="tomcat" roles="manager-gui"/>
+ 
+ 
+first install jankin plugin deploy to container plugin 
+goto manage jankins click credencials then click system and then global then add credentials and then click cerate 
+,click dashboard new item then click maven and git urland then click last postbuild action clocl pollscmm()
+ 
+group :-
+usermod -aG wheel jack
+usermod -aG nobody jack
+su jack
