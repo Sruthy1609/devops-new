@@ -1,0 +1,56 @@
+VPC 
+
+Create both VPC region 
+
+
+1st Region:
+ 
+Open public instance
+goto: Terminal
+yum install httpd
+cd /var/www/html
+echo "This is server" > index.html
+systemctl start httpd
+systemctl enable httpd
+sudo su -
+vim tokyo-key
+chmod 400 tokyo-key.pem
+
+from public instance 
+hit the private ssh and open private instance in same terminal
+yum install httpd
+ping google.com
+
+2nd Region
+
+Open public instance
+goto: Terminal
+yum install httpd
+cd /var/www/html
+echo "This is server" > index.html
+systemctl start httpd
+systemctl enable httpd
+sudo su -
+vim tokyo-key
+chmod 400 tokyo-key.pem
+
+from public instance 
+hit the private ssh and open private instance in same terminal
+yum install httpd
+ping google.com
+
+Goto VPC
+Now, open peering connection
+-> create peering connection -> Name -> VPC ID -> my account -> another region -> select destination region -> enter destination VPC ID -> OK
+
+Goto to peering connection in other region accept it 
+
+Edit route table -> public route table -> edit route -> add route -> if given 10.0.0.0/16 so we have to put 20.0.0.0/16 -> peering connection 
+
+do above step in both regions 
+
+-> save changes
+
+In Terminal: 
+Go to public instance of both region 
+ping (jo opposite terminal ke heading me likha hai wo ip dalna hai, - ko hata ke . dalna )(private ip of opposite private instance)
