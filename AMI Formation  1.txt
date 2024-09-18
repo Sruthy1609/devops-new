@@ -13,6 +13,7 @@ ll
 cat index.html
 cd 
 systemctl start httpd
+systemctl enable httpd
 systemctl status httpd
 curl http://localhost
 ip a s
