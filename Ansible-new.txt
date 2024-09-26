@@ -284,13 +284,13 @@ vim Radhika.yaml
 ---
 - name: creating some user aand group
   hosts: all
- 
+
   tasks:
             - name: create a group
               group:
                 name: devops
                 state: present
- 
+
             - name: create an user thor
               user:
                   name: thor
@@ -307,6 +307,22 @@ vim Radhika.yaml
                   name: nfs-utils
                   state: present
 
+            - name: install http
+              yum:
+                  name: httpd
+                  state: present
+
+            - name: start service and enable it
+              systemd:
+                  name: httpd
+                  state: started
+                  enabled: true
+
+            - name: create a index file
+              copy:
+                  dest: /var/www/html/index.html
+                  content: this is my web server
+
 
 controller
 ansible-playbook Radhika.yaml --syntax-check
@@ -318,31 +334,7 @@ go in host
 cd /etc/passwd
 u will get thor user in it
 
-2)security -http
-cat index.html
-helloo
-vim configure.yaml
-configure apache server
----
-- name: configure apache server
-  hosts: all
- 
-  tasks:
-            - name: installed httpd pkg
-              dnf:
-                    name: httpd
-                    state: latest
-            - name: copy index.html file
-              copy:
-                    src: index.html
-                    dest: /var/www/html/index.html
-            - name: started apache
-              systemd:
-                    name: httpd
-                    state: started
-                    enabled: true
 
-ansible-playbook configure.yaml
 go in host
 cd /var/www/html
 curl http://host1.example.com
@@ -364,57 +356,73 @@ vim configure-apache.yml
       dnf:
         name: httpd
         state: latest
- 
+
     - name: copy httpd.conf file to target machine
       copy:
         src: httpd.conf
         dest: /etc/httpd/conf/httpd.conf
- 
+
     - name: copy index.html
       copy:
         src: index.html
         dest: /var/www/html
- 
+
+    - name: install firewalld
+      dnf:
+        name: firewalld
+        state: latest
     - name: start and enable firewalld
       systemd:
         name: firewalld
         state: started
         enabled: true
- 
+
     - name: restart the httpd service
       systemd:
         name: httpd
         state: restarted
         enabled: true
       notify: restart_httpd
- 
+
     - name: configure firewalld
       firewalld:
         service: http
         permanent: yes
         state: enabled
         immediate: true
- 
+
     - name: allow port in firewall
       firewalld:
         port: 81/tcp
         permanent: yes
         state: enabled
         immediate: true
- 
+
   handlers:
     - name: restart_httpd
       systemd:
         name: httpd
+
         state: restarted
 
-cd httpd/conf
+    - name: restart_firewall
+      systemd:
+        name: firewalld
+
+        state: restarted
+
+cd etc/httpd/conf [ansible] change port in Listen [whichever] and change in server also and firewall port 
 cp httpd.conf /etc/ansible
+back in ansible folder
+ansible-playbook configure-apache.yaml -C
+ansible-playbook configure-apache.yaml
+
 
 
 go in host
 systemctl status httpd  
 it will show available
+and in server add the new port and see
 
 
 
