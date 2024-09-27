@@ -1,3 +1,7 @@
+terraform init(first)
+terraform validate
+terrafrom plan
+terraform apply
 provider "aws" {
   region = "ap-southeast-1"
 
