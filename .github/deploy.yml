@@ -1,0 +1,27 @@
+name: Deploy Java app
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+
+    - name: Build with Maven
+      run: mvn clean install
+
+    - name: Deploy to server
+      run: |
+        scp target/your-app.jar user@server:/path/to/app
+        ssh user@server "cd /path/to/app && java -jar your-app.jar"
