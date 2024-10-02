@@ -183,3 +183,6 @@ comment the lines:
 add:
 kubectl rollout restart deployment/<your_deployment_name>			#(to update your deployment)
 
+kubectl get svc
+then copy the external link and paste in browser
+
