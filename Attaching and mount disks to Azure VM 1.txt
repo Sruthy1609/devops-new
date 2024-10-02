@@ -1,0 +1,25 @@
+Attaching new volume to Azure VM:
+
+
+GOTO Disks
+- Create a managed disk
+- Select Resource grp
+- Give name
+- Select region
+- Source type - None
+- Size - 4GB
+Review + create
+
+Goto your VM
+- Settings -> Disks -> attach existing disks - select your disk
+Apply
+
+Connect your VM 	(ssh -i "your_key_name.pem" azureuser@VM_ip)
+- lsblk
+- mkfs.ext4 /dev/sdh
+- mkdir /new-dir
+- mount /dev/sdh /new-dir	(temporary mounting)
+- df -h
+- blkid -> copy UUID
+- vim /etc/fstab
+- UUID=" "	/new-dir	ext4	default	0	0		(permanent mounting)
