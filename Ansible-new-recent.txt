@@ -324,6 +324,28 @@ vim Radhika.yaml
                   content: this is my web server
 
 
+---
+- name: Configure Apache server
+  hosts: all
+  tasks:
+    - name: Install httpd package
+      dnf:
+        name: httpd
+        state: latest
+
+    - name: Copy fstab file
+      copy:
+        src: /etc/fstab
+        dest: /tmp
+
+    - name: Start Apache
+      systemd:
+        name: httpd
+        state: started
+        enabled: true
+
+
+
 controller
 ansible-playbook Radhika.yaml --syntax-check
 ansible-playbook Radhika.yaml -C
@@ -341,7 +363,8 @@ curl http://host1.example.com
 [u will get to see what is written in index.html]
 also run in browser using hosts ip address 
 
-
+cd /tmp
+ll
 
 Handler
 in controller 
@@ -410,6 +433,9 @@ vim configure-apache.yml
         name: firewalld
 
         state: restarted
+
+
+
 
 cd etc/httpd/conf [ansible] change port in Listen [whichever] and change in server also and firewall port 
 cp httpd.conf /etc/ansible
