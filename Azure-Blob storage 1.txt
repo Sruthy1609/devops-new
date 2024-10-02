@@ -1,0 +1,47 @@
+Blob storage
+
+Goto storage account -> create new account
+- Give name
+- region
+- primary service -> 
+	blob - azure blob storage
+	file sharing - azure files
+- (optional) primary workload -> backup and archive
+- performane -> standard
+- redundancy -> GRS
+Review + create
+
+Create container:
+Goto your storage account -> (left panel) data storage -> containers -> + container -> give name -> create
+Upload any file in your container.
+
+Goto AWS EC2 instance:
+Launch a EC2 instance (Ubuntu 22.04 LTS, t2.micro)
+
+run commands:
+
+sudo wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt-get update
+
+sudo apt-get install blobfuse
+sudo apt-get install libfuse2
+
+create a file (fuse_connection.cfg):
+accountName myaccount    		(storage acc name)
+accountKey storageaccesskey		(goto your storage acc. -> (left panel) security -> access keys)
+containerName mycontainer		(your_container_name)
+authType Key
+
+sudo chmod 600 fuse_connection.cfg
+
+sudo mkdir /mycontainer
+
+sudo blobfuse /mycontainer --tmp-path=/mnt/resource/blobfusetmp  --config-file=fuse_connection.cfg -o attr_timeout=240 -o entry_timeout=240 -o negative_timeout=120
+
+df -h		(you will see your storage mounted)
+
+cd /mycontainer
+ll
+you will see your storage account file
+
