@@ -1,0 +1,22 @@
+Azure-LoadBalancer
+
+-Create Resource Group
+-Create Vnet -> Create 2 subnet public and private -> for private enable private ip
+-Create 2 Virtual Machine-> networking -> add public and private subnets
+-Create a Load Balancer - Type=public  -> 
+Frontend IP -> create new public ip
+select internet
+-Backend pool -> give name -> select vnet -> NIC -> add -> select both VM -> save
+Inbound Rules -> add lb rule -> give name -> select frontend ip -> select backend pool -> add lb rule -> give name -> port & backend port 80 -> health probe (Create new) -> save
+Review + create
+
+Goto vm connect public vm:   (ssh -i "key_name.pem" azureuser@public_ip)
+apt install apache2 -y
+cd /var/www/html/
+echo "this is my web server" > index.html
+service apache2 start
+
+verify port 8080 is enabled in both VMs
+
+goto your public VM -> networking - load balancing -> copy the frontend ip address
+paste ip in the new tab
