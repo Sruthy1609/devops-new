@@ -1,0 +1,160 @@
+AKS CLUSTER 
+aws linux
+t2.midium[use]
+BY EC2 MACHINE
+ 
+
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+ 
+sudo dnf install -y https://packages.microsoft.com/config/rhel/9.0/packages-microsoft-prod.rpm
+ 
+sudo dnf install azure-cli
+ 
+az login
+
+az ad sp create-for-rbac --name "myApp" --role contributor --scopes /subscriptions/<subscription-id> --sdk-auth 	
+(you will get json file copy the file and goto GitHub credentials (settings -> secret & variable -> actions - new repo secret - AZURE_CREDENTIALS - paste the json file))
+ 
+az group create --name MY_RESOURCE --location "France Central"
+ 
+az aks create --resource-group MY_RESOURCE --name MY_AKS_CLUSTER --node-count 1 --generate-ssh-keys
+ 
+az aks install-cli
+ 
+az aks get-credentials --resource-group MY_RESOURCE --name MY_AKS_CLUSTER
+
+az aks list --output table    	#to list all clusters
+
+aws configure
+
+kubectl create secret docker-registry ecr-registry-secret --docker-server=<your_ecr_uri>  --docker-username=AWS   --docker-password=$(aws ecr get-login-password)
+
+kubectl get secret
+
+
+goto GitHub repo
+------------------------------------
+create deployment.yml:
+
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels: 
+     app: regapp
+ 
+spec:
+  replicas: 2 
+  selector:
+    matchLabels:
+      app: regapp
+ 
+  template:
+    metadata:
+      labels:
+        app: regapp
+    spec:
+      containers:
+      - name: regapp
+        image: <your_ecr_image>
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: ecr-registry-secret
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+
+----------------------------------------------
+
+create service.yml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    app: regapp 
+spec:
+  selector:
+    app: regapp
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer
+
+--------------------------------------------
+
+create main.yml in .GitHub/workflows/main.yml:
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: <your_region>
+
+    - name: Log in to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    
+    - name: Build Docker image
+      run: |
+        <your_ecr_push_commands> 2 and 3 cmd
+
+    - name: Push Docker image to ECR
+      run: |
+        <your_ecr_push_commands> 4 cmd
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up kubelogin for non-interactive login
+      uses: azure/use-kubelogin@v1
+      with:
+        kubelogin-version: 'v0.0.25'
+
+    - name: Get K8s context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: <your_resource_grp>
+        cluster-name: <your_cluster_name>
+        admin: 'false'
+        use-kubelogin: 'true'
+
+    - name: Deploy to AKS
+      run: |
+        kubectl apply -f deployment.yml
+        kubectl apply -f service.yml
+        # kubectl rollout restart deployment/<your_deployment_name>
+
+-----------------------------------
