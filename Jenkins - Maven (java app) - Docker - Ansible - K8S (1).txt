@@ -1,0 +1,137 @@
+1. Create a developer server, add ssh key to the github account, clone project files, push files to the repository.
+
+2. Create a jenkins server, install jenkins, maven, java, git and start jenkins machine, generate token create webhook, install maven integration, github plugins add jdk,maven tools and build a maven project.
+
+3. Create a tomcat server, install tomcat and java, modify 2 context.xml files, 1 tomact-users.xml file, add credentials in jenkins, buils a tomcat project by deploying a war file container.
+
+4. Create a docker server, install docker, ssh conncet with jenkins, create ecr repo, add ssh server and exec commands push image in ecr.
+
+5. Create a k8s server, install kubectl, eksctl, create cluster and nodegroup.
+
+6. Create ansible server, ssh connect with cluster server We have to make cluster server as a host to create and run deployment and service files automatically in jenkins via playbook.
+
+Ansible:
+
+- yum install ansible* -y
+- ansible --version
+- cd /etc/ansible/
+- vim ansible.cfg
+- vim hosts
+- ansible all -m ping
+
+create playbook:
+-----------------------------
+configure.yml:
+
+---
+- hosts: cluster-server
+  gather_facts: no
+  tasks:
+    - name: Deploy application in Kubernetes
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: my-app
+            namespace: default
+            labels:
+              app: my-app
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: my-app
+            template:
+              metadata:
+                labels:
+                  app: my-app
+              spec:
+                containers:
+                - name: my-app
+                  image: 288761750357.dkr.ecr.ap-southeast-1.amazonaws.com/mansi-28:latest
+                  imagePullPolicy: Always
+                  ports:
+                  - containerPort: 8080
+            strategy:
+              type: RollingUpdate
+              rollingUpdate:
+                maxSurge: 1
+                maxUnavailable: 1
+    - name: Copy service file to target
+      copy:
+        src: service.yml
+        dest: /tmp/service.yml
+
+    - name: Create Kubernetes Service
+      command: kubectl apply -f /tmp/service.yml
+      register: service_output
+
+    - name: Rollout
+      command: kubectl rollout undo deployment/my-app
+---------------------
+
+---------------------
+create service.yml:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: regapp-service
+  labels:
+    app: my-app
+spec:
+  selector:
+    app: my-app
+
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+  type: LoadBalancer
+--------------------
+
+
+Install pyhton, pip, openshift in Kubernetes-server
+
+- sudo yum install python3 -y
+- sudo yum install python3-pip -y
+- pip install openshift Kubernetes
+
+Ansible server - run playbook:
+- ansible-playbook configure.yml --syntax-check
+- ansible-playbook configure.yml
+
+
+Integrate ansible server in Jenkins GUI
+Install Ansible plugin
+Goto manage Jenkins -> System -> Add SSH server
+name -> Ansible
+Hostname -> ip of ansible machine
+Username -> root
+Remote directory -> /root
+
+Test configuration - success!!
+
+
+Configure your maven build project.
+
+Goto post build actions -> add server.
+
+Ansible
+exec command:
+ansible-playbook -i /etc/ansible/hosts /etc/ansible/<playbook_file>.yml
+
+Build project
+
+Kubernetes server:
+kubectl get svc  ( copy external ip of your service )
+
+Run in browser with :8080/webapp
+
+
+To automate modify your cluster.yml by adding:
+- name: Create Kubernetes Service
+      command: kubectl rollout restart deployment/my-app
+      register: service_output
