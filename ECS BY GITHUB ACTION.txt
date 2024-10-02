@@ -18,14 +18,14 @@ amazonecstaskexecutionrolepolicy
 continer name 
 image uri
 
-
-create cluster
+Actuallll 
+create cluster(in host m/c)
 infra -> fargate
 create
 
 create task definition
 infra -> aws fargate
-task role -> create new if not created or choose "Create new role"
+task role -> create new if not created or choose "Create new role" select existing role
 container:
 give container name -- ecr image uri -- yes
 create
