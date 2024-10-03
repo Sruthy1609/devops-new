@@ -1,0 +1,23 @@
+ create azure block storage 
+➢Choose Redudnacy = LRS ➔
+
+ Create VM Linux instance
+ Create File Share -> (storage account -> data storage ->file share)
+connect
+in cmd connect
+apt-get update
+apt install cifs-utils
+mkdir /mnt/azure
+
+Run the mount command
+>>>
+mount -t cifs //storageazuretoec2.file.core.windows.net/newfile /mnt/azure -o 
+vers=3.0,username=storageazuretoec2,password=3v2n7Z5OtATaRKt5LCNMtEr+jawhFX+abujr6
+q024etWt0KMGP0f76AHkKNS2WwIBccdO1eHbo+0+ASthH2v5g==,dir_mode=0777,file_mode=0777,serverino
+
+
+ in password put keys= storage account- >security & networking ->keys
+: Check the mounted file via entry point 
+newfile
+ lsblk
+df -h
